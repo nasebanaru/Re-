@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+public partial class StaffTable : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        if(IsPostBack)
+        { 
+
+        SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
+        conn.Open();
+        string checkCourseCode = "select count (*) from OnlineTable where CourseCode = '" + TextBox1.Text + "'";
+        SqlCommand com = new SqlCommand(checkCourseCode, conn);
+
+        int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
+
+            if (temp == 1)
+
+            {
+                Response.Write("Course is already submitted for processing");
+            }
+
+
+        conn.Close();
+
+        }
+
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Response.Write("Returning to Login");
+        Response.Redirect("LOGIN.aspx");
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        try
+        {
+
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
+            conn.Open();
+            string insertQuary = "insert into OnlineTable (CourseCode, CourseName, Blended/Online, LecturerID, Telephone, Email, ContentDeveloperLecturer, LecturerTelephone, LecturerEmail) values (@CCode, @CName, @B/O, @LID, @Tele, @email, @CDLecturer, @LTele, @Lemail)";
+            SqlCommand com = new SqlCommand(insertQuary, conn);
+
+            com.Parameters.AddWithValue("@CCode", TextBox1.Text);
+            com.Parameters.AddWithValue("@CName", TextBox2.Text);
+            com.Parameters.AddWithValue("@B/O", DropDownList1.SelecedItem.ToString);
+            com.Parameters.AddWithValue("@LID", TextBox4.Text);
+            com.Parameters.AddWithValue("@Tele", TextBox5.Text);
+            com.Parameters.AddWithValue("@email", TextBox6.Text);
+            com.Parameters.AddWithValue("@CDLecturer", TextBox7.Text);
+            com.Parameters.AddWithValue("@LTele", TextBox8.Text);
+            com.Parameters.AddWithValue("@Lemail)", TextBox9.Text);
+
+            com.ExecuteNonQuery();
+            Response.Write("Request Sent");
+            Response.Redirect("UserDataManager.aspx");
+            conn.Close();
+
+        }
+
+        catch(Exception ex)
+        {
+            Response.Write("Error:" + ex.ToString());
+
+        }
+
+
+
+    }
+
+
+}
