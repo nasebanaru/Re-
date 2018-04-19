@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+
+public partial class UserDataManager : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+       
+        Response.Redirect("DirectorLogin.aspx");
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+
+        try
+        {
+
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
+            conn.Open();
+            string insertQuary = "insert into OnlineTable (Approved/NotApproved) values (@A/N)";
+            SqlCommand com = new SqlCommand(insertQuary, conn);
+
+            com.Parameters.AddWithValue("@A/N", TextBox1.Text);
+
+
+            com.ExecuteNonQuery();
+            Response.Write("Request Sent");
+            conn.Close();
+
+        }
+
+        catch (Exception ex)
+        {
+            Response.Write("Error:" + ex.ToString());
+
+        }
+
+
+    }
+
+
+}
