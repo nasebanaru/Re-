@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Configuration;
+
+
+public partial class Administration_Section_AdministrationLogin : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+
+        SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
+        conn.Open();
+        string checkuser = "select count (*) from Registration where ID = '" + TextBox1.Text + "'";
+        SqlCommand com = new SqlCommand(checkuser, conn);
+
+        int temp = Convert.ToInt32(com.ExecuteScalar().ToString());
+        conn.Close();
+
+        if (temp == 1)
+        {
+            conn.Open();
+            String checkPasswordQuery = "select password from Registration where Password = '" + TextBox2.Text + "'";
+            SqlCommand passComm = new SqlCommand(checkPasswordQuery, conn);
+            String password = passComm.ExecuteScalar().ToString().Replace(" ", "");
+            if (password == TextBox2.Text)
+            {
+                Session["New"] = TextBox1.Text;
+                Response.Write("Password is Correct");
+                Response.Redirect("AdminTable.aspx");
+
+            }
+            else
+            {
+                Response.Write("Password is not Correct");
+            }
+
+        }
+        else
+        {
+            Response.Write("Password is NOT Correct");
+        }
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("LOGIN.aspx");
+
+    }
+
+
+    protected void Button3_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("DirectorLogin.aspx");
+
+    }
+
+
+
+
+
+
+
+
+}
