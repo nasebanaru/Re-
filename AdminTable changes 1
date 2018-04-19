@@ -1,0 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+
+public partial class HOME : System.Web.UI.Page
+{
+    SqlDataAdapter da = new SqlDataAdapter("Select * OnlineTable", " Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Vanessa96\Desktop\ManagementSystem\ManagementSystem\App_Data\REGISTRATION.mdf;Integrated Security=True");
+    DataSet ds = new DataSet();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        if (!IsPostBack)
+        {
+            da.SelectCommand.CommandText = "Select * from OnlineTable";
+            da.Fill(ds, "OnlineTable");
+            GridView1.DataSource = ds.Tables["OnlineTable"];
+            GridView1.DataBind();
+            SqlCommandBuilder con = new SqlCommandBuilder(da);
+            da.Update(ds.Tables["OnlineTable"]);
+        }
+    }
+
+    protected void TreeView1_SelectedNodeChanged(object sender, EventArgs e)
+    {
+        CheckBox chkStatus = (CheckBox)sender;
+        GridView row = (GridViewRow)chkStatus.NamingContainer;
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("AdministrationLogin.aspx");
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        try
+        {
+
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
+            conn.Open();
+            string insertQuary = "insert into OnlineTable (Approved/NotApproved) values (@A/N)";
+            SqlCommand com = new SqlCommand(insertQuary, conn);
+
+            com.Parameters.AddWithValue("@A/N", Approval.Text);
+
+
+            com.ExecuteNonQuery();
+            conn.Close();
+
+        }
+
+        catch (Exception ex)
+        {
+            Response.Write("Error:" + ex.ToString());
+
+        }
+
+    }
+}
